@@ -18,7 +18,7 @@
 <body>
 	<script type="text/javascript">
 		// Variáveis do Jogo
-		var canvas, ctx, ALTURA, LARGURA, frames = 0, maxPulo = 3,
+		var canvas, ctx, ALTURA, LARGURA, frames = 0, maxPulo = 3, velocidade = 6,
 
 		chao = {
 			y: 550,
@@ -37,9 +37,9 @@
 			altura: 50,
 			largura: 50,
 			cor: "#ff4e4e",
-			gravidade: 1.5,
+			gravidade: 1.6,
 			velocidade: 0,
-			forcaDoPulo: 15,
+			forcaDoPulo: 20,
 			qtdPulos: 0,
 
 			atualiza: function(){
@@ -62,6 +62,51 @@
 			desenha: function(){
 				ctx.fillStyle = this.cor;
 				ctx.fillRect(this.x, this.y, this.altura, this.largura);
+			}
+		},
+
+		obstaculos = {
+			_obs: [],
+			cores: ["#ffbc1c", "#ff1c1c", "#ff85e1", "#52a7ff", "#78ff5d"],
+			tempoInsere: 0,
+
+			insere: function(){
+				//  Inserindo um objeto dentro do push
+				this._obs.push({
+					x: LARGURA,
+					largura: 30 + Math.floor(21 * Math.random()),
+					altura: 30 + Math.floor(120 * Math.random()),
+					cor: this.cores[Math.floor(5 * Math.random())]
+				});
+
+				this.tempoInsere = 35 + Math.floor(21 * Math.random());
+			},
+
+			atualiza: function(){
+				if(this.tempoInsere == 0)
+					this.insere();
+				else
+					this.tempoInsere--;
+
+				for(var i = 0, tam = this._obs.length; i < tam; i++){
+					var obs = this._obs[i];
+
+					obs.x -= velocidade;
+
+					if(obs.x <= -obs.largura){
+						this._obs.splice(i, 1);
+						tam--;
+						i--;
+					}
+				}
+			},
+
+			desenha: function(){
+				for(var i = 0, tam = this._obs.length; i < tam; i++){
+					var obs = this._obs[i];
+					ctx.fillStyle = obs.cor;
+					ctx.fillRect(obs.x, chao.y - obs.altura, obs.largura, obs.altura);
+				}
 			}
 		};
 
@@ -95,12 +140,13 @@
 			atualiza();
 			desenha();
 
-			window.requestAnimationFrame(roda)
+			window.requestAnimationFrame(roda);
 		}
 
 		function atualiza(){
 			frames++;
 			bloco.atualiza();
+			obstaculos.atualiza();
 		}
 
 		function desenha(){
@@ -108,11 +154,12 @@
 			ctx.fillRect(0, 0, LARGURA, ALTURA);
 
 			chao.desenha();
+			obstaculos.desenha();
 			bloco.desenha();
 		}
 
 		// Inicializa o 
-		main()
+		main();
 	</script>
 
 </body>
