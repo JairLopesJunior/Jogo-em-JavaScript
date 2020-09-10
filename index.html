@@ -57,7 +57,7 @@
 			// cor: "#ff4e4e",
 			gravidade: 1.6,
 			velocidade: 0,
-			forcaDoPulo: 20.6,
+			forcaDoPulo: 25,
 			qtdPulos: 0,
 			score: 0,
 			rotacao: 0,
@@ -84,6 +84,12 @@
 			reset: function(){
 				this.velocidade = 0;
 				this.y = 0;
+
+				if(this.score > record){
+					localStorage.setItem("record", this.score);
+					record = this.score;
+				}
+
 				this.score = 0;
 			},
 
@@ -229,7 +235,7 @@
 			ctx.font = "50px Arial";
 			ctx.fillText(bloco.score, 30, 68);
 
-			if(estados == estados.jogando){
+			if(estadoAtual == estados.jogando){
 				obstaculos.desenha();
 			}
 			
@@ -280,7 +286,7 @@
 			// 	ctx.restore();
 
 			// }else if(estadoAtual == estados.jogando)
-			// 	obstaculos.desenha();
+			 	// obstaculos.desenha();
 		}
 
 		// Inicializa o 
